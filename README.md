@@ -1,4 +1,4 @@
-# FakeStore CLI
+# Pre Entrega proyecto NodeJS
 
 
 ### Script CLI para listar, crear y eliminar productos usando https://fakestoreapi.com
