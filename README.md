@@ -2,6 +2,8 @@
 
 API REST desarrollada con Node.js y Express para la administración de productos con autenticación Firebase.
 
+🚀 **API en producción:** [https://nodeprojectttech.vercel.app](https://nodeprojectttech.vercel.app)
+
 ## Tecnologías
 
 - **Node.js** + **Express**
@@ -9,7 +11,7 @@ API REST desarrollada con Node.js y Express para la administración de productos
 - **JWT** para tokens
 - **CORS** y **Body-parser**
 
-## Instalación
+## Instalación Local
 
 ```bash
 npm install
@@ -24,11 +26,16 @@ PORT=3000
 NODE_ENV=development
 JWT_SECRET=tu_secret_key
 FIREBASE_PROJECT_ID=tu_project_id
+FIREBASE_API_KEY=tu_api_key
+FIREBASE_AUTH_DOMAIN=tu_auth_domain
+FIREBASE_STORAGE_BUCKET=tu_storage_bucket
+FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
+FIREBASE_APP_ID=tu_app_id
 ```
 
 Agregar archivo `src/config/serviceAccountKey.json` con las credenciales de Firebase Admin SDK.
 
-## Uso
+## Uso Local
 
 ```bash
 # Iniciar servidor
@@ -38,27 +45,103 @@ npm run start
 node src/scripts/seedProducts.js
 ```
 
-El servidor estará disponible en `http://localhost:3000`
-
 ## Endpoints
 
 ### Autenticación
 
-- `POST /auth/register` - Registrar usuario
-- `POST /auth/login` - Iniciar sesión
+#### Registrar Usuario
+
+```http
+POST https://nodeprojectttech.vercel.app/auth/register
+Content-Type: application/json
+
+{
+  "email": "usuario@example.com",
+  "password": "password123"
+}
+```
+
+#### Iniciar Sesión
+
+```http
+POST https://nodeprojectttech.vercel.app/auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@example.com",
+  "password": "password123"
+}
+```
+
+**Respuesta:**
+
+```json
+{
+  "status": 200,
+  "message": "Login successful",
+  "customToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "uid": "...",
+    "email": "usuario@example.com"
+  }
+}
+```
 
 ### Productos
 
-- `GET /api/products` - Listar todos los productos
-- `GET /api/products/:id` - Obtener producto por ID
-- `POST /api/products/create` - Crear producto (requiere autenticación)
-- `PUT /api/products/:id` - Actualizar producto (requiere autenticación)
-- `DELETE /api/products/:id` - Eliminar producto (requiere autenticación)
+#### Listar Todos los Productos (Pública)
+
+```http
+GET https://nodeprojectttech.vercel.app/api/products
+```
+
+#### Obtener Producto por ID (Pública)
+
+```http
+GET https://nodeprojectttech.vercel.app/api/products/{id}
+```
+
+#### Crear Producto (Requiere Autenticación)
+
+```http
+POST https://nodeprojectttech.vercel.app/api/products/create
+Authorization: Bearer {tu_firebase_id_token}
+Content-Type: application/json
+
+{
+  "title": "Producto Nuevo",
+  "price": 99.99,
+  "description": "Descripción del producto",
+  "category": "Electronics",
+  "image": "https://example.com/image.jpg"
+}
+```
+
+#### Actualizar Producto (Requiere Autenticación)
+
+```http
+PUT https://nodeprojectttech.vercel.app/api/products/{id}
+Authorization: Bearer {tu_firebase_id_token}
+Content-Type: application/json
+
+{
+  "price": 79.99,
+  "description": "Nueva descripción"
+}
+```
+
+#### Eliminar Producto (Requiere Autenticación)
+
+```http
+DELETE https://nodeprojectttech.vercel.app/api/products/{id}
+Authorization: Bearer {tu_firebase_id_token}
+```
 
 ## Estructura del Proyecto
 
 ```
 ├── index.js
+├── vercel.json
 ├── src/
 │   ├── config/
 │   │   ├── firebase.config.js
@@ -81,9 +164,41 @@ El servidor estará disponible en `http://localhost:3000`
 │       └── seedProducts.js
 ```
 
+## Códigos de Estado HTTP
+
+- **200** - OK
+- **201** - Created
+- **400** - Bad Request (datos inválidos)
+- **401** - Unauthorized (sin token)
+- **403** - Forbidden (token inválido/expirado)
+- **404** - Not Found (recurso no existe)
+- **500** - Internal Server Error
+
 ## Pruebas
 
-Usar el archivo `api-tests.http` con la extensión REST Client de VS Code, o herramientas como Postman/cURL.
+### Opción 1: Postman
+
+Importar las peticiones desde `api-tests.http` o crear manualmente.
+
+### Opción 2: cURL
+
+```bash
+# Listar productos
+curl https://nodeprojectttech.vercel.app/api/products
+
+# Registrar usuario
+curl -X POST https://nodeprojectttech.vercel.app/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"test123"}'
+```
+
+### Opción 3: REST Client (VS Code)
+
+Usar el archivo `api-tests.http` con la extensión REST Client.
+
+## Deployment
+
+Deployado en Vercel: [https://nodeprojectttech.vercel.app](https://nodeprojectttech.vercel.app)
 
 ## Autor
 
