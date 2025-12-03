@@ -1,0 +1,64 @@
+### Archivo de pruebas HTTP para REST Client (VS Code Extension)
+
+### 1. Registrar usuario
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test123456"
+}
+
+###
+
+### 2. Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test123456"
+}
+
+###
+
+### 3. Ver todos los productos (pública)
+GET http://localhost:3000/api/products
+
+###
+
+### 4. Ver producto por ID (pública)
+GET http://localhost:3000/api/products/0NZzYJYadNbrDM1OGURw
+
+###
+
+### 5. Crear producto (protegida - reemplazar TOKEN)
+POST http://localhost:3000/api/products/create
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_FIREBASE
+Content-Type: application/json
+
+{
+  "title": "Webcam Logitech C920",
+  "price": 79.99,
+  "description": "Webcam Full HD 1080p con micrófono estéreo",
+  "category": "Electronics",
+  "image": "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=500"
+}
+
+###
+
+### 6. Actualizar producto (protegida - reemplazar TOKEN)
+PUT http://localhost:3000/api/products/0NZzYJYadNbrDM1OGURw
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_FIREBASE
+Content-Type: application/json
+
+{
+  "price": 119.99,
+  "description": "Teclado mecánico gaming RGB - OFERTA ESPECIAL"
+}
+
+###
+
+### 7. Eliminar producto (protegida - reemplazar TOKEN)
+DELETE http://localhost:3000/api/products/UsDCMvdUBphnwNp3xaNK
+Authorization: Bearer REEMPLAZAR_CON_TOKEN_DE_FIREBASE

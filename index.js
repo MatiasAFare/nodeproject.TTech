@@ -1,29 +1,48 @@
-const [method, path, ...args] = process.argv.slice(2);
-const [title, price, category] = args;
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 
-const apiPath = (path || 'products').replace(/^\/+|\/+$/g, '');
-const url = `https://fakestoreapi.com/${apiPath}`;
+dotenv.config();
 
-(async () => {
-    const fetchClient = typeof fetch !== 'undefined' ? fetch : (await import('node-fetch')).default;
+import authRoutes from './src/routes/auth.routes.js';
+import productsRoutes from './src/routes/products.routes.js';
 
-    const options = {
-        GET: { method: 'GET' },
-        POST: {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, price: Number(price), category })
-        },
-        DELETE: { method: 'DELETE' }
-    };
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-    const res = await fetchClient(url, options[method] || options.GET);
-    const text = await res.text();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-    try {
-        const data = JSON.parse(text);
-        console.log(JSON.stringify(data, null, 2));
-    } catch {
-        console.log(text || JSON.stringify({ status: res.status }, null, 2));
-    }
-})();
+app.use('/auth', authRoutes);
+app.use('/api', productsRoutes);
+
+app.get('/', (req, res) => {
+    res.status(200).json({
+        message: 'API is running',
+        version: '1.0.0'
+    });
+});
+
+app.use((req, res) => {
+    res.status(404).json({
+        status: 404,
+        message: `Route ${req.method} ${req.path} not found`,
+        path: req.path
+    });
+});
+
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+    res.status(err.status || 500).json({
+        status: err.status || 500,
+        message: err.message || 'Internal Server Error'
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV}`);
+});
+
